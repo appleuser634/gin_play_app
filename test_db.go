@@ -16,9 +16,9 @@ type User struct {
     Age  int    `db:"age"`
 }
 
-type Userlist []User
-
 func main() {
+
+	type Userlist []User
 
     //Userデータ一件一件を格納する配列Userlistを、Userlist型で用意
     var userlist Userlist

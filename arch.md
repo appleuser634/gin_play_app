@@ -7,7 +7,7 @@
 
 ### メッセージの送受信 
 
-::: mermaid
+``` mermaid
 sequenceDiagram
 	title Messaging Flow
 	participant client as ESP32
@@ -20,4 +20,3 @@ sequenceDiagram
 	db->>api: 
 	Note over api: Check Credential
 	api->>db: INSERT into message
-	
