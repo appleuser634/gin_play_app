@@ -1,27 +1,32 @@
 package main
 
 import (
+	"local.package/Controller"
 	"local.package/Model"
-    
-	_ "github.com/mattn/go-sqlite3"
     "github.com/gin-gonic/gin"
 )
 
+
+var model = Model.NewModel()
+var controller = Controller.NewController(model)
+var router = gin.Default()
+
 func main() {
-    r := gin.Default()
 
-
-    r.GET("/ping", func(c *gin.Context) {
+    router.GET("/ping", func(c *gin.Context) {
         c.JSON(200, gin.H{
             "message": "pong",
         })
     })
     
-    r.GET("/getUserName", func(c *gin.Context) {
-		Model.GetUserName()
+    router.GET("/getUserName", func(c *gin.Context) {
+		controller.GetUserName()
+	})
+    
+	router.GET("/getUserToken", func(c *gin.Context) {
+		controller.GetUserToken()
 	})
 
 
-
-    r.Run(":3000")
+    router.Run(":3000")
 }

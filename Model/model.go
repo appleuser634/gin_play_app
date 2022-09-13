@@ -1,53 +1,54 @@
 package Model
 
 import (
-	"fmt"
 	"log"
+	"fmt"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/jmoiron/sqlx"
 )
+	
 
-
-
-//引っ張ってきたデータを当てはめる構造体を用意。
-//その際、バッククオート（`）で、どのカラムと紐づけるのかを明示する。
-type User struct {
-    ID   int    `db:"id"`
-    Name string `db:"name"`
-    Age  int    `db:"age"`
+type model struct {
+	conn *sqlx.DB
 }
 
-type Userlist []User
-func GetUserName() {
+type Model interface {
+	GetUserName() (*sqlx.Rows)
+	GetUserToken() (*sqlx.Rows)
+}
 
+
+func NewModel() Model {
 	//Mysqlに接続。sql.Openの代わりにsqlx.Openを使う。
 	//ドライバ名、データソース名を引数に渡す
-	db, err := sqlx.Open("sqlite3", "./test.sqlite")
+	conn, err := sqlx.Open("sqlite3", "./mobus_db.sqlite")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("Initialize DATABASE!!!")
+
+	return &model{conn}
+}
+
+func (model *model)GetUserName() (*sqlx.Rows) {
 
 	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
-	rows, err := db.Queryx("SELECT * FROM test")
+	rows, err := model.conn.Queryx("SELECT * FROM user")
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-    //Userデータ一件一件を格納する配列Userlistを、Userlist型で用意
-    var userlist Userlist
+	return rows
+}
 
-    var user User
 
-	for rows.Next() {
-		//rows.Scanの代わりにrows.StructScanを使う
-		err := rows.StructScan(&user)
-		if err != nil {
-			log.Fatal(err)
-		}
-		userlist = append(userlist, user)
+func (model *model)GetUserToken() (*sqlx.Rows) {
+
+	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
+	rows, err := model.conn.Queryx("SELECT * FROM user")
+	if err != nil {
+		log.Fatal(err)
 	}
-		fmt.Println("Called Model!!")
-        fmt.Println(userlist[0].Name)
-        // username := userlist[0].Name
-
+	return rows
 }

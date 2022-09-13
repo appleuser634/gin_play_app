@@ -1,9 +1,8 @@
 # DB Archi
 
 ### "user"
-| id | user_name | pass_token | secret_word |
-| 22 |     mu    |   sha256   |    sha256   |
-
+| id | user_name |   token   | 
+| 22 |     mu    |   sha256  |
 
 ### "message"
 

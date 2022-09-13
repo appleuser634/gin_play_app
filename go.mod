@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.6
+	local.package/Controller v0.0.0-00010101000000-000000000000
 	local.package/Model v0.0.0-00010101000000-000000000000
 )
 
@@ -31,3 +32,5 @@ require (
 )
 
 replace local.package/Model => ./Model
+
+replace local.package/Controller => ./Controller
