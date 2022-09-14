@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"local.package/Controller"
 	"local.package/Model"
     "github.com/gin-gonic/gin"
@@ -24,7 +25,16 @@ func main() {
 	})
     
 	router.GET("/getUserToken", func(c *gin.Context) {
-		controller.GetUserToken()
+		controller.GetUserName()
+	})
+
+	
+	router.POST("/sendMessage", func(c *gin.Context) {
+		fmt.Printf("Params Message:%v\n",c.PostForm("message"))
+		fmt.Printf("Params From:%v\n",c.PostForm("from"))
+		fmt.Printf("Params To:%v\n",c.PostForm("to"))
+		fmt.Printf("Params Token:%v\n",c.PostForm("token"))
+		controller.GetUserName()
 	})
 
 

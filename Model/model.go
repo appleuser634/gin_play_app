@@ -2,7 +2,6 @@ package Model
 
 import (
 	"log"
-	"fmt"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/jmoiron/sqlx"
@@ -26,8 +25,6 @@ func NewModel() Model {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("Initialize DATABASE!!!")
 
 	return &model{conn}
 }
