@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 	"local.package/Controller"
 	"local.package/Model"
     "github.com/gin-gonic/gin"
@@ -11,6 +11,11 @@ import (
 var model = Model.NewModel()
 var controller = Controller.NewController(model)
 var router = gin.Default()
+
+
+type JsonRequest struct {
+	Message string `json:"message"`
+}
 
 func main() {
 
@@ -30,11 +35,13 @@ func main() {
 
 	
 	router.POST("/sendMessage", func(c *gin.Context) {
-		fmt.Printf("Params Message:%v\n",c.PostForm("message"))
-		fmt.Printf("Params From:%v\n",c.PostForm("from"))
-		fmt.Printf("Params To:%v\n",c.PostForm("to"))
-		fmt.Printf("Params Token:%v\n",c.PostForm("token"))
+		var json JsonRequest
+		if err := c.ShouldBindJSON(&json); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		controller.GetUserName()
+		c.JSON(http.StatusOK, gin.H{"message": json.Message})
 	})
 
 
