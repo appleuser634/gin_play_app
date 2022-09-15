@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"local.package/Controller"
 	"local.package/Model"
@@ -42,6 +43,8 @@ func main() {
 		}
 		controller.GetUserName()
 		c.JSON(http.StatusOK, gin.H{"message": json.Message})
+
+		fmt.Printf("Message:%v\n",json.Message)	
 	})
 
 
