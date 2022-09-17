@@ -1,22 +1,20 @@
-package Model
+package model
 
 import (
 	"log"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
-	
 
 type model struct {
 	conn *sqlx.DB
 }
 
 type Model interface {
-	GetUserName() (*sqlx.Rows)
-	GetUserToken() (*sqlx.Rows)
+	GetUserName() *sqlx.Rows
+	GetUserToken() *sqlx.Rows
 }
-
 
 func NewModel() Model {
 	//Mysqlに接続。sql.Openの代わりにsqlx.Openを使う。
@@ -29,7 +27,7 @@ func NewModel() Model {
 	return &model{conn}
 }
 
-func (model *model)GetUserName() (*sqlx.Rows) {
+func (model *model) GetUserName() *sqlx.Rows {
 
 	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
 	rows, err := model.conn.Queryx("SELECT * FROM user")
@@ -39,8 +37,7 @@ func (model *model)GetUserName() (*sqlx.Rows) {
 	return rows
 }
 
-
-func (model *model)GetUserToken() (*sqlx.Rows) {
+func (model *model) GetUserToken() *sqlx.Rows {
 
 	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
 	rows, err := model.conn.Queryx("SELECT * FROM user")

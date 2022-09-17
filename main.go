@@ -2,51 +2,47 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"local.package/controller"
+	"local.package/model"
+	"local.package/requests"
 	"net/http"
-	"local.package/Controller"
-	"local.package/Model"
-    "github.com/gin-gonic/gin"
 )
 
-
-var model = Model.NewModel()
-var controller = Controller.NewController(model)
+var mod = model.NewModel()
+var con = controller.NewController(mod)
 var router = gin.Default()
-
-
-type JsonRequest struct {
-	Message string `json:"message"`
-}
 
 func main() {
 
-    router.GET("/ping", func(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "message": "pong",
-        })
-    })
-    
-    router.GET("/getUserName", func(c *gin.Context) {
-		controller.GetUserName()
-	})
-    
-	router.GET("/getUserToken", func(c *gin.Context) {
-		controller.GetUserName()
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
 	})
 
-	
+	router.GET("/getUserName", func(c *gin.Context) {
+		con.GetUserName()
+	})
+
+	router.GET("/getUserToken", func(c *gin.Context) {
+		con.GetUserName()
+	})
+
+	router.GET("/update", func(c *gin.Context) {
+		c.FileAttachment("./esp_bin/file.zip", "filename.zip")
+	})
+
 	router.POST("/sendMessage", func(c *gin.Context) {
-		var json JsonRequest
-		if err := c.ShouldBindJSON(&json); err != nil {
+		var sendMessage requests.SendMessageRequest
+		if err := c.ShouldBindJSON(&sendMessage); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		controller.GetUserName()
-		c.JSON(http.StatusOK, gin.H{"message": json.Message})
-
-		fmt.Printf("Message:%v\n",json.Message)	
+		con.SendMessage(sendMessage)
+		c.JSON(http.StatusOK, gin.H{"message": sendMessage.Message, "from": sendMessage.From})
+		fmt.Printf("Message:%v\n", sendMessage.Message)
 	})
 
-
-    router.Run(":3000")
+	router.Run(":3000")
 }

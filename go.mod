@@ -6,8 +6,9 @@ require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.6
-	local.package/Controller v0.0.0-00010101000000-000000000000
-	local.package/Model v0.0.0-00010101000000-000000000000
+	local.package/controller v0.0.0-00010101000000-000000000000
+	local.package/model v0.0.0-00010101000000-000000000000
+	local.package/requests v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -31,6 +32,8 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace local.package/Model => ./Model
+replace local.package/model => ./model
 
-replace local.package/Controller => ./Controller
+replace local.package/controller => ./controller
+
+replace local.package/requests => ./requests

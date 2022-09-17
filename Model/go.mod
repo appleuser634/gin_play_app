@@ -1,4 +1,4 @@
-module local.package/Model
+module local.package/model
 
 go 1.19
 
