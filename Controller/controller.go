@@ -2,9 +2,11 @@ package controller
 
 import (
 	"fmt"
+	"log"
+
+	"github.com/jmoiron/sqlx"
 	"local.package/model"
 	"local.package/requests"
-	"log"
 )
 
 type controller struct {
@@ -31,8 +33,22 @@ func NewController(model model.Model) Controller {
 	return &controller{model}
 }
 
+func PackData[T comparable](rows *sqlx.Rows, obj T) {
+	type ObjList []T
+	var objlist ObjList
+
+	for rows.Next() {
+		//rows.Scanの代わりにrows.StructScanを使う
+		err := rows.StructScan(&obj)
+		if err != nil {
+			log.Fatal(err)
+		}
+		objlist = append(objlist, obj)
+	}
+}
+
 func (controller *controller) GetUserName() {
-	//Userデータ一件一件を格納する配列Userlistを、Userlist型で用意
+
 	var userlist Userlist
 	var user User
 
@@ -48,7 +64,6 @@ func (controller *controller) GetUserName() {
 	}
 	fmt.Println("Called Controller!!")
 	fmt.Println(userlist[0].Name)
-	// username := userlist[0].Name
 }
 
 func (controller *controller) GetUserToken() {
@@ -87,6 +102,6 @@ func (controller *controller) SendMessage(SendMessageJson requests.SendMessageRe
 		userlist = append(userlist, user)
 	}
 	fmt.Println("Called Controller!!")
-	fmt.Println(userlist[0].Token)
+	fmt.Printf("User Token:%v\n", userlist[0].Token)
 	// username := userlist[0].Name
 }
