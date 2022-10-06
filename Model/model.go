@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/jmoiron/sqlx"
@@ -13,7 +14,7 @@ type model struct {
 
 type Model interface {
 	GetUserName() *sqlx.Rows
-	GetUserToken() *sqlx.Rows
+	GetUserToken(string) *sqlx.Rows
 }
 
 func NewModel() Model {
@@ -37,10 +38,10 @@ func (model *model) GetUserName() *sqlx.Rows {
 	return rows
 }
 
-func (model *model) GetUserToken() *sqlx.Rows {
+func (model *model) GetUserToken(name string) *sqlx.Rows {
 
 	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
-	rows, err := model.conn.Queryx("SELECT * FROM user")
+	rows, err := model.conn.Queryx(fmt.Sprintf("SELECT * FROM user where user_name = '%s'", name))
 	if err != nil {
 		log.Fatal(err)
 	}
