@@ -6,12 +6,12 @@ curl -X POST http://localhost:3000/sendMessage \
   --data-urlencode 'message=Hello'  \
   --data-urlencode 'from=mimoc'  \
   --data-urlencode 'to=mu' \
-  --data-urlencode 'token=123'
+  --data-urlencode 'token=1234'
 ```
 
 Json
 ```
-curl -X POST http://localhost:8080/postjson \
+curl -X POST http://localhost:3000/sendMessage \
   -H 'content-type: application/json' \
-  -d '{ "field_str": "文字だ", "field_int": 12, "field_bool": true }'
+  -d '{ "message": "Hello!", "from": "mimoc", "token": "1234" }'
 ```

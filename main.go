@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"local.package/controller"
 	"local.package/model"
 	"local.package/requests"
-	"net/http"
 )
 
 var mod = model.NewModel()
@@ -39,8 +40,10 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		con.SendMessage(sendMessage)
-		c.JSON(http.StatusOK, gin.H{"message": sendMessage.Message, "from": sendMessage.From})
+
+		httpStatus := con.SendMessage(sendMessage)
+
+		c.JSON(httpStatus, gin.H{"message": sendMessage.Message, "from": sendMessage.From})
 		fmt.Printf("Message:%v\n", sendMessage.Message)
 	})
 
