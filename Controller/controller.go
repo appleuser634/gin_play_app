@@ -64,6 +64,7 @@ func (controller *controller) SendMessage(SendMessageJson requests.SendMessageRe
 	}
 
 	// 送信メッセージを登録する
+	controller.model.CreateMessage(SendMessageJson.Message, SendMessageJson.From, SendMessageJson.To)
 
 	return http.StatusOK
 
