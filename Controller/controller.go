@@ -14,8 +14,14 @@ type controller struct {
 
 type Controller interface {
 	GetUserName()
-	UserAuth(requests.SendMessageRequest) bool
+	UserAuth(authInfo) bool
 	SendMessage(requests.SendMessageRequest) int
+	GetMessage(requests.GetMessageRequest) int
+}
+
+type authInfo struct {
+	name  string
+	token string
 }
 
 func NewController(model model.Model) Controller {
@@ -30,10 +36,10 @@ func (controller *controller) GetUserName() {
 	fmt.Println(userlist[0].Name)
 }
 
-func (controller *controller) UserAuth(SendMessageJson requests.SendMessageRequest) bool {
+func (controller *controller) UserAuth(auth authInfo) bool {
 
 	// ユーザのTokenを取得
-	userlist := controller.model.GetUserToken(SendMessageJson.From)
+	userlist := controller.model.GetUserToken(auth.name)
 
 	// 該当ユーザーがいなければfalseを返す
 	if len(userlist) == 0 {
@@ -44,7 +50,7 @@ func (controller *controller) UserAuth(SendMessageJson requests.SendMessageReque
 	fmt.Printf("User Token:%v\n", userlist[0].Token)
 
 	// Tokenを照合して認証
-	if SendMessageJson.Token == userlist[0].Token {
+	if auth.token == userlist[0].Token {
 		fmt.Println("Auth OK!!!")
 		return true
 	} else {
@@ -56,7 +62,12 @@ func (controller *controller) UserAuth(SendMessageJson requests.SendMessageReque
 
 func (controller *controller) SendMessage(SendMessageJson requests.SendMessageRequest) int {
 
-	authResult := controller.UserAuth(SendMessageJson)
+	auth := authInfo{}
+
+	auth.name = SendMessageJson.From
+	auth.token = SendMessageJson.Token
+
+	authResult := controller.UserAuth(auth)
 
 	// 認証失敗であれば400エラーを返す
 	if !authResult {
@@ -67,6 +78,31 @@ func (controller *controller) SendMessage(SendMessageJson requests.SendMessageRe
 	controller.model.CreateMessage(SendMessageJson.Message, SendMessageJson.From, SendMessageJson.To)
 
 	return http.StatusOK
+}
 
-	// username := userlist[0].Name
+func (controller *controller) GetMessage(GetMessageJson requests.GetMessageRequest) int {
+
+	auth := authInfo{}
+
+	auth.name = GetMessageJson.To
+	auth.token = GetMessageJson.Token
+
+	authResult := controller.UserAuth(auth)
+
+	// 認証失敗であれば400エラーを返す
+	if !authResult {
+		return http.StatusBadRequest
+	}
+
+	// 受信メッセージを取得する
+	messagelist := controller.model.GetMessage(GetMessageJson.MessageID, GetMessageJson.To)
+
+	for _, m := range messagelist {
+		fmt.Printf("MessageID:%d\n", m.ID)
+		fmt.Printf("Message From:%s\n", m.MessageFrom)
+		fmt.Printf("Message:%s\n", m.Message)
+	}
+
+	return http.StatusOK
+
 }

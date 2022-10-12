@@ -13,9 +13,10 @@ type model struct {
 }
 
 type Model interface {
-	GetUserName() []User
-	GetUserToken(string) []User
+	GetUserName() Userlist
+	GetUserToken(string) Userlist
 	CreateMessage(string, string, string)
+	GetMessage(string, string) Messagelist
 }
 
 func NewModel() Model {
@@ -29,8 +30,6 @@ func NewModel() Model {
 	return &model{conn}
 }
 
-// 引っ張ってきたデータを当てはめる構造体を用意。
-// その際、バッククオート（`）で、どのカラムと紐づけるのかを明示する。
 type User struct {
 	ID    int    `db:"id"`
 	Name  string `db:"user_name"`
@@ -38,6 +37,15 @@ type User struct {
 }
 
 type Userlist []User
+
+type Message struct {
+	ID          int    `db:"id"`
+	MessageFrom string `db:"message_from"`
+	MessageTo   string `db:"message_to"`
+	Message     string `db:"message"`
+}
+
+type Messagelist []Message
 
 func PackData[T comparable](rows *sqlx.Rows, obj T, objlist []T) []T {
 	for rows.Next() {
@@ -51,7 +59,7 @@ func PackData[T comparable](rows *sqlx.Rows, obj T, objlist []T) []T {
 	return objlist
 }
 
-func (model *model) GetUserName() []User {
+func (model *model) GetUserName() Userlist {
 	var userlist Userlist
 	var user User
 
@@ -67,7 +75,7 @@ func (model *model) GetUserName() []User {
 	return userlist
 }
 
-func (model *model) GetUserToken(name string) []User {
+func (model *model) GetUserToken(name string) Userlist {
 
 	var userlist Userlist
 	var user User
@@ -99,4 +107,20 @@ func (model *model) CreateMessage(message string, from string, to string) {
 
 	fmt.Print("Insert message!")
 
+}
+
+func (model *model) GetMessage(message_id string, message_to string) Messagelist {
+	var messagelist Messagelist
+	var message Message
+
+	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
+	rows, err := model.conn.Queryx(fmt.Sprintf("SELECT id,message_to,message_from,message FROM message where id > '%s' and message_to = '%s'", message_id, message_to))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// ユーザのTokenを取得
+	messagelist = PackData(rows, message, messagelist)
+
+	return messagelist
 }

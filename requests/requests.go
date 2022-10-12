@@ -6,3 +6,9 @@ type SendMessageRequest struct {
 	To      string `json:"to"`
 	Token   string `json:"token"`
 }
+
+type GetMessageRequest struct {
+	MessageID string `json:"id"`
+	To        string `json:"to"`
+	Token     string `json:"token"`
+}

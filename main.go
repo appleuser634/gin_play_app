@@ -47,5 +47,18 @@ func main() {
 		fmt.Printf("Message:%v\n", sendMessage.Message)
 	})
 
+	router.POST("/getMessage", func(c *gin.Context) {
+		var getMessage requests.GetMessageRequest
+		if err := c.ShouldBindJSON(&getMessage); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		fmt.Printf("Message To:%v\n", getMessage.To)
+		httpStatus := con.GetMessage(getMessage)
+
+		c.JSON(httpStatus, gin.H{"message_to": getMessage.To, "message_id": getMessage.MessageID})
+	})
+
 	router.Run(":3000")
 }
