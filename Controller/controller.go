@@ -16,7 +16,7 @@ type Controller interface {
 	GetUserName()
 	UserAuth(authInfo) bool
 	SendMessage(requests.SendMessageRequest) int
-	GetMessage(requests.GetMessageRequest) int
+	GetMessage(requests.GetMessageRequest) (int, model.Messagelist)
 }
 
 type authInfo struct {
@@ -80,7 +80,9 @@ func (controller *controller) SendMessage(SendMessageJson requests.SendMessageRe
 	return http.StatusOK
 }
 
-func (controller *controller) GetMessage(GetMessageJson requests.GetMessageRequest) int {
+func (controller *controller) GetMessage(GetMessageJson requests.GetMessageRequest) (int, model.Messagelist) {
+
+	messagelist := model.Messagelist{}
 
 	auth := authInfo{}
 
@@ -91,11 +93,11 @@ func (controller *controller) GetMessage(GetMessageJson requests.GetMessageReque
 
 	// 認証失敗であれば400エラーを返す
 	if !authResult {
-		return http.StatusBadRequest
+		return http.StatusBadRequest, messagelist
 	}
 
 	// 受信メッセージを取得する
-	messagelist := controller.model.GetMessage(GetMessageJson.MessageID, GetMessageJson.To)
+	messagelist = controller.model.GetMessage(GetMessageJson.MessageID, GetMessageJson.To)
 
 	for _, m := range messagelist {
 		fmt.Printf("MessageID:%d\n", m.ID)
@@ -103,6 +105,6 @@ func (controller *controller) GetMessage(GetMessageJson requests.GetMessageReque
 		fmt.Printf("Message:%s\n", m.Message)
 	}
 
-	return http.StatusOK
+	return http.StatusOK, messagelist
 
 }
