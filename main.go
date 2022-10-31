@@ -57,7 +57,7 @@ func main() {
 		fmt.Printf("Message To:%v\n", getMessage.To)
 		httpStatus, messagelist := con.GetMessage(getMessage)
 
-		c.JSON(httpStatus, messagelist)
+		c.JSON(httpStatus, gin.H{"messages": messagelist})
 	})
 
 	router.Run(":3000")
