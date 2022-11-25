@@ -13,7 +13,7 @@ Json
 ```
 curl -X POST http://localhost:3000/sendMessage \
   -H 'content-type: application/json' \
-  -d '{ "message": "Hello!", "from": "mimoc", "token": "1234" }'
+  -d '{ "message": "Hello!", "from": "mimoc", "to":"mu" "token": "1234" }'
 ```
 
 ### GET Message
