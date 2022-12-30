@@ -1,4 +1,4 @@
-module test-app
+module mobusServer
 
 go 1.19
 
