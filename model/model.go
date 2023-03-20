@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -113,8 +114,11 @@ func (model *model) GetMessage(message_id string, message_to string) Messagelist
 	var messagelist Messagelist
 	var message Message
 
+	id, _ := strconv.Atoi(message_id)
+	id -= 10
+
 	//SELECTを実行。db.Queryの代わりにdb.Queryxを使う。
-	rows, err := model.conn.Queryx(fmt.Sprintf("SELECT id,message_to,message_from,message FROM message where id > '%s' and message_to = '%s'", message_id, message_to))
+	rows, err := model.conn.Queryx(fmt.Sprintf("SELECT id,message_to,message_from,message FROM message where id > '%d' and message_to = '%s' order by id desc limit 10", id, message_to))
 	if err != nil {
 		log.Fatal(err)
 	}
